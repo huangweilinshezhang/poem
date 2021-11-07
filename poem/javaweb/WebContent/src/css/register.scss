@@ -1,0 +1,39 @@
+main {
+  > form {
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+    > .form_item {
+      margin-bottom: 10px;
+      > label {
+        display: inline-block;
+        width: 80px;
+      }
+      > input {
+        height: 25px;
+        width: 200px;
+        &[name="code"] {
+          width: 120px;
+        }
+        &[type="checkbox"]{
+          width:auto;
+          height: auto;
+        }
+      }
+      > canvas {
+        cursor: pointer;
+        vertical-align: middle;
+      }
+      > a {
+        color: #333;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+      .btn_submit {
+        width:100px;
+        height: 30px;
+      }
+    }
+  }
+}

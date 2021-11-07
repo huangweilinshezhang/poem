@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>游戏</title>
+  <link rel="stylesheet" href="../css/element.css">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/priactise.css">
+</head>
+
+<body>
+
+  <header class="poetry_header">
+    <nav>
+      <div class="logo">
+        古诗词网
+      </div>
+      <ul class="navList">
+        <li><a href="./index.html">推荐</a></li>
+        <li><a href="./shiwens.html">诗文</a></li>
+        <li><a href="./zuozhe.html">作者</a></li>
+        <li class="active"><a href="./priactise.html">游戏</a></li>
+        <li><a href="./login.html">我的</a></li>
+				<li class="active"><a href="./users.html">用户</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div id="app">
+    <main>
+      <!-- 搜索区域 -->
+      <el-card class="card_title">
+        <div class="box" @click="name='sctk'">
+          <img src="../images/youxi1.png" alt="">
+          <h4>诗词填空</h4>
+          <el-rate v-model="3.7" disabled-void-color="#C6D1DE" disabled show-score text-color="#ff9900"
+            score-template="{value}">
+          </el-rate>
+        </div>
+        <div class="box" @click="name='yszc'">
+          <img src="../images/youxi2.jpg" alt="">
+          <h4>吟诗作词</h4>
+          <el-rate v-model="5.0" disabled-void-color="#C6D1DE" disabled show-score text-color="#ff9900"
+            score-template="{value}">
+          </el-rate>
+        </div>
+        <div class="box" @click="name='weizhi'">
+          <img src="../images/youxi2.jpg" alt="">
+          <h4>吟诗作词</h4>
+          <el-rate v-model="5.0" disabled-void-color="#C6D1DE" disabled show-score text-color="#ff9900"
+            score-template="{value}">
+          </el-rate>
+        </div>
+        <div class="box" @click="name='weizhi'">
+          <img src="../images/youxi2.jpg" alt="">
+          <h4>吟诗作词</h4>
+          <el-rate v-model="5.0" disabled-void-color="#C6D1DE" disabled show-score text-color="#ff9900"
+            score-template="{value}">
+          </el-rate>
+        </div>
+        <div class="box" @click="name='weizhi'">
+          <img src="../images/youxi2.jpg" alt="">
+          <h4>吟诗作词</h4>
+          <el-rate v-model="5.0" disabled-void-color="#C6D1DE" disabled show-score text-color="#ff9900"
+            score-template="{value}">
+          </el-rate>
+        </div>
+        <div class="box" @click="name='weizhi'">
+          <img src="../images/youxi2.jpg" alt="">
+          <h4>吟诗作词</h4>
+          <el-rate v-model="5.0" disabled-void-color="#C6D1DE" disabled show-score text-color="#ff9900"
+            score-template="{value}">
+          </el-rate>
+        </div>
+      </el-card>
+
+      <el-card class="card_content">
+        <div slot="header">
+          <h2>{{titleName}}</h2>
+          <el-form :model="searchForm" inline>
+            <el-form-item label="类型">
+              <el-select clearable v-model="searchForm.leixing" placeholder="请选择" @change="selectHandleChange">
+                <el-option v-for="(item,index) in leixing" :key="index" :label="item.type" :value="item.type">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="作者">
+              <el-select clearable v-model="searchForm.zuozhe" placeholder="请选择" @change="selectHandleChange">
+                <el-option v-for="(item,index) in zuozhe" :key="index" :label="item.poet" :value="item.poet">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="朝代">
+              <el-select clearable v-model="searchForm.chaodai" placeholder="请选择" @change="selectHandleChange">
+                <el-option v-for="(item,index) in chaodai" :key="index" :label="item.dynasty" :value="item.dynasty">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </div>
+        <!-- 诗词填空 -->
+        <div class="content" name="sctk" v-show="name === 'sctk'">
+          <h2 v-cloak>{{sctkObj.title}}</h2>
+          <h4 v-cloak>{{sctkObj.zuozhe}} ({{sctkObj.chaodai}})</h4>
+          <span v-cloak>{{sctkArr[0]}}</span>
+          <input type="text" class="sctkInput" v-model="sctkValue">
+          <span v-cloak>{{sctkArr[1]}}</span>
+          <br>
+          <el-button type="primary" @click="sctkClick">提交</el-button>
+        </div>
+        <!-- 吟诗作词 -->
+        <div class="content" name="yszc" v-show="name === 'yszc'">
+          <h2 v-cloak>{{yszcObj.title}} 【{{yszcObj.chaodai}}】{{yszcObj.zuozhe}}</h2>
+          <h3 v-cloak>“{{yszcObj.msg}}”的{{yszcKey}}是？</h3>
+          <div class="select_box" v-for="(item,index) in yszcObj.msgArr">
+            <span @click="handleOptionClick">{{item}}</span>
+            <br>
+          </div>
+          <div class="key_box" v-show="showKey">
+            <div class="yes" v-show="showFlag">
+              <img src="../images/yes.png" alt="">
+              <div class="mask"></div>
+            </div>
+            <div class="no" v-show="!showFlag">
+              <img src="../images/no2.png" alt="">
+              <div class="mask"></div>
+              <img src="../images/no1.png" alt="">
+              <div class="mask"></div>
+            </div>
+          </div>
+          <el-button type="primary" @click="nextYSZC">下一题</el-button>
+        </div>
+        <!-- 未知游戏 -->
+        <div class="content" name="yszc" v-show="name === 'weizhi'">
+          <h2>暂无设计</h2>
+        </div>
+      </el-card>
+
+
+    </main>
+  </div>
+
+
+
+  <script src="../js/axios.js"></script>
+  <script src="../js/vue.js"></script>
+  <script src="../js/element.js"></script>
+  <script src="../js/priactise.js"></script>
+</body>
+
+</html>

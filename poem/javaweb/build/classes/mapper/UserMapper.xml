@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="demo">
+	<!-- 用户登录 -->
+	<select id="userLogin" resultType="model.user.UserBean" parameterType="model.user.UserBean">
+		SELECT * FROM tb_user where name=#{name} and pwd=#{pwd}
+	</select>
+	<!-- 用户的spring——mvc操作，开始 -->
+	<select id="selectAllUser" resultType="model.user.UserBean" parameterType="model.user.UserBean">
+	 SELECT id,name,sex,age,email,number,address,staus FROM tb_user 
+	 <if test="begin != null &amp;&amp; end != null">
+   			 limit ${begin},${end}
+		 </if>
+	 ;
+	</select>
+	<select id="selectUser" resultType="model.user.UserBean" parameterType="model.user.UserBean">
+	 SELECT * FROM tb_user WHERE id=#{id};
+	</select>
+	<insert id="addUser" parameterType="model.user.UserBean">
+	  insert into tb_user (name,pwd,age,sex,number,email,address) values (#{name},#{pwd},#{age},#{sex},#{number},#{email},#{address})
+	</insert>
+	<insert id="deleteUser" parameterType="model.user.UserBean">
+	 DELETE FROM tb_user WHERE id=#{id};
+	</insert>
+	<insert id="updateUser" parameterType="model.user.UserBean">
+	 update tb_user set name=#{name},pwd=#{pwd},age=#{age},sex=#{sex},number=#{number},email=#{email},address=#{address} WHERE id=#{id};
+	</insert>
+	<!-- 用户的spring——mvc操作，结束 -->
+	
+	<!-- 诗词的spring——mvc操作，开始 -->
+	<!-- 1.获取所有古诗： -->
+	<select id="selectAllPoem" resultType="model.student.PoemPostDto" parameterType="model.student.PoemPostDto">
+			select tp.id,tp.title,tp.dynasty,tp.content,pt.poet from tb_poem tp,poet_table pt where tp.poemId=pt.id 
+		 <if test="poet != ''"> and poet=#{poet}</if> 
+		 <if test="dynasty != ''"> and dynasty=#{dynasty}</if>
+		 <if test="type != ''"> and type=#{type}</if>
+		  <if test="begin != null &amp;&amp; end != null">
+   			 limit ${begin},${end}
+		 </if>
+	 ;	
+	</select>
+
+	<resultMap type="model.student.PoemPostDto" id="selectOnePoem_post">
+		<result column="id"  property="id"/>
+		<result column="title"  property="title"/>
+		<result column="dynasty"  property="dynasty"/>
+		<result column="content"  property="content"/>
+		<result column="poemId"  property="poemId"/>
+		<result column="poet"  property="poet"/>
+	</resultMap>
+	<select id="selectPoem" resultMap="selectOnePoem_post">
+		 SELECT m.id,m.title,m.dynasty,t.poet,m.content  
+		 FROM tb_poem as m,poet_table as t WHERE m.poemId=t.id AND m.id=#{id}
+		 ;
+	</select>
+	<!-- 1.查找作者id -->
+	<select id="selectAutherId" resultType="model.student.PoemPostDto" parameterType="model.student.PoemPostDto">
+		select id from poet_table where poet=#{auther};
+	</select>
+	<!-- 2.1添加古诗的诗人 -->
+	<select id="addPoet" resultType="model.student.PoemPostDto" parameterType="model.student.PoemPostDto">
+		insert into poet_table (poet) values (#{auther})
+	</select>
+	<!-- 2.2添加古诗 -->
+	<select id="addPoem" resultType="model.student.PoemPostDto" parameterType="model.student.PoemPostDto">
+		insert into tb_poem (title,dynasty,poemId,content,type) values (#{title},#{dynasty},#{poemId},#{content},#{type})
+	</select>
+	
+	<!-- 3.1修改古诗 的诗人-->
+	<select id="updatePoem" resultType="model.student.PoemPostDto" parameterType="model.student.PoemPostDto">
+		update poet_table set poet=#{auther} where id=#{poemId};
+	</select>
+	<!-- 3.2修改古诗-->
+	<select id="updatePoem2" resultType="model.student.PoemPostDto" parameterType="model.student.PoemPostDto">
+		update tb_poem set title=#{title},dynasty=#{dynasty},content=#{content},type=#{type} where id=#{id};
+	</select>
+	<!-- 3.3根据id修改poemId-->
+	<select id="updatePoemId" resultType="model.student.PoemPostDto" parameterType="model.student.PoemPostDto">
+		update tb_poem set poemId=#{poemId},content=#{content},type=#{type} where id=#{id};
+	</select>
+	<!-- 4.删除古诗： -->
+	<select id="deletePoem" resultType="model.student.Poem" parameterType="model.student.Poem">
+		DELETE FROM tb_poem WHERE id=#{id};
+	</select>
+	<!-- 诗词的spring——mvc操作，结束 -->
+	
+	<!-- 分类查询的spring——mvc操作，开始 -->
+	<!-- 5.获取所有类型： -->
+	<select id="selectAllType" resultType="model.student.PoemPostDto" parameterType="model.student.PoemPostDto">
+		select type from tb_poem group by type 
+		
+		<if test="begin != null &amp;&amp; end != null">
+   			 limit ${begin},${end}
+		 </if>
+		;
+	</select>
+	<!-- 6.获取所有作者： -->
+	<select id="selectAllAuther" resultType="model.student.PoemPostDto" parameterType="model.student.PoemPostDto">
+		select id,poet,msg from poet_table 
+		<if test="poet != ''&amp;&amp; poet != null"> WHERE poet LIKE CONCAT('%',#{poet},'%')</if>
+		group by id,poet,msg
+		<!--   -->
+		
+		<if test="begin != null &amp;&amp; end != null">
+   			 limit ${begin},${end}
+		 </if>
+		;
+	</select>
+	<!-- 7.获取所有朝代 -->
+	<select id="selectAllDynasty" resultType="model.student.PoemPostDto" parameterType="model.student.PoemPostDto">
+		select dynasty from tb_poem group by dynasty
+		<if test="begin != null &amp;&amp; end != null">
+   			 limit ${begin},${end}
+		 </if>
+		;
+	</select>
+	<!-- 8.根据类型查找古诗： -->
+	<select id="classified_Query" resultType="model.student.PoemPostDto" parameterType="model.student.PoemPostDto">
+		select title from tb_poem where type=#{type}
+		<if test="begin != null &amp;&amp; end != null">
+   			 limit ${begin},${end}
+		 </if>
+		;
+	</select>
+	<!-- 9.根据作者查找古诗： -->
+	<select id="selectPoemByAuther" resultType="model.student.PoemPostDto" parameterType="model.student.PoemPostDto">
+		select title from poet_table where poemId=#{poemId}
+		<if test="begin != null &amp;&amp; end != null">
+   			 limit ${begin},${end}
+		 </if>
+		;
+	</select>
+	<!-- 9.1根据朝代查找诗人ID： -->
+	<select id="selectAllPoemId" resultType="model.student.PoemPostDto" parameterType="model.student.PoemPostDto">
+
+		select poemId from tb_poem where dynasty LIKE CONCAT('%',#{dynasty},'%')
+		<!-- select poemId from tb_poem where dynasty=#{dynasty}-->
+	</select>
+	<!-- 9.2根据诗人ID查找诗人信息： -->
+	<select id="selectPoetById" resultType="model.student.PoemPostDto" parameterType="model.student.PoemPostDto">
+		select poet,msg from poet_table where id=#{id}
+	
+	</select>
+	
+	<!-- 10.根据朝代查找古诗 -->	
+	<select id="selectPoemByDynasty" resultType="model.student.PoemPostDto" parameterType="model.student.PoemPostDto">
+		select title from tb_poem where dynasty=#{dynasty}
+		<if test="begin != null &amp;&amp; end != null">
+   			 limit ${begin},${end}
+		 </if>
+		;
+	</select>
+	<!-- 11.获取作者信息： -->	
+	<select id="selectAllPoet" resultType="model.student.PoemPostDto" parameterType="model.student.PoemPostDto">
+	 select * from poet_table 
+	 <if test="begin != null &amp;&amp; end != null">
+   			 limit ${begin},${end}
+		 </if>
+	 ;
+	</select>
+	
+	
+	
+	<!-- 12.添加作者信息 -->
+	<select id="addPoet2" resultType="model.student.PoemPostDto" parameterType="model.student.PoemPostDto">
+	 insert into poet_table (poet,msg) values (#{auther},#{msg})
+	</select>
+	<!-- 12.编辑作者信息 -->
+	<select id="updatePoet" resultType="model.student.PoemPostDto" parameterType="model.student.PoemPostDto">
+	 update poet_table set poet=#{auther},msg=#{msg} where id=#{id}
+	</select>
+	<select id="updatePoemAuther" resultType="model.student.PoemPostDto" parameterType="model.student.PoemPostDto">
+		update tb_poem set dynasty=#{dynasty} where poemId=#{poemId};
+	</select>
+	<!-- 14. 删除作者界面-->
+	<select id="deletePoet" resultType="model.student.PoemPostDto" parameterType="model.student.PoemPostDto">
+		DELETE FROM poet_table WHERE poet=#{auther}
+		
+	</select>
+	
+	<!-- 游戏页面开始mvc -->
+	<!-- 15.诗词填空（根据类型作者朝代随机获取一首古诗）：-->	
+	<select id="game1" resultType="model.student.PoemPostDto" parameterType="model.student.PoemPostDto">
+					SELECT m.id,m.title,m.dynasty,t.poet,m.content  
+		 FROM tb_poem as m LEFT JOIN poet_table as t ON m.poemId=t.id
+		 where m.poemId=t.id ORDER BY RAND() LIMIT 1;
+	</select>
+	<!-- 16.吟诗作词（根据类型作者朝代随机获取一首古诗）： -->	
+	<select id="game2" resultType="model.student.PoemPostDto" parameterType="model.student.PoemPostDto">
+		select tp.id,tp.title,tp.dynasty,tp.content,pt.poet from tb_poem tp,poet_table pt where tp.poemId=pt.id 
+		 <if test="poet != ''"> and poet=#{poet}</if> 
+		 <if test="dynasty != ''"> and dynasty=#{dynasty}</if>
+		 <if test="type != ''"> and type=#{type}</if>
+		  ORDER BY RAND() LIMIT 1;
+	</select>
+	<!-- 17.superGame2： -->
+	<select id="superGame2" resultType="model.student.PoemPostDto" parameterType="model.student.PoemPostDto">
+		select tp.id,tp.title,tp.dynasty,tp.content,pt.poet from tb_poem tp,poet_table pt where tp.poemId=pt.id 
+		 <if test="poet != ''"> and poet=#{poet}</if> 
+		 <if test="dynasty != ''"> and dynasty=#{dynasty}</if>
+		 <if test="type != ''"> and type=#{type}</if>
+		  <if test="begin != null &amp;&amp; end != null">
+   			 limit ${begin},${end}
+		 </if>
+	 ;		  
+	</select>
+</mapper>

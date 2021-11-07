@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>作者</title>
+  <link rel="stylesheet" href="../css/element.css">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/zuozhe.css">
+</head>
+
+<body>
+
+  <header class="poetry_header">
+    <nav>
+      <div class="logo">
+        古诗词网
+      </div>
+      <ul class="navList">
+        <li><a href="./index.html">推荐</a></li>
+        <li><a href="./shiwens.html">诗文</a></li>
+        <li class="active"><a href="./zuozhe.html">作者</a></li>
+        <li><a href="./priactise.html">游戏</a></li>
+        <li><a href="./login.html">我的</a></li>
+				<li class="active"><a href="./users.html">用户</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div id="app">
+    <main>
+      <!-- 文章主内容 -->
+      <article>
+        <!-- 搜索区域 -->
+        <el-card class="card_title">
+          <div slot="header" class="card_title_header">
+            <h2>搜索内容</h2>
+            <el-button type="primary" @click="addDialogVisible=true" v-if="staus">添加作者</el-button>
+          </div>
+          <el-form :model="searchForm" inline>
+            <el-form-item label="朝代">
+              <el-input v-model="searchForm.chaodai" clearable @input="getPoetList()"></el-input>
+            </el-form-item>
+            <el-form-item label="作者名">
+              <el-input v-model="searchForm.zuozhe" clearable @input="getPoetList()"></el-input>
+            </el-form-item>
+          </el-form>
+        </el-card>
+
+        <!-- 卡片视图内容 -->
+        <el-card v-for="(item,index) in poetList" :key="index" class="content_wrap">
+          <button class="removeBtn" v-if="staus"></button>
+          <span @click="remove(item.poet)" class="removeText" v-if="staus">x</span>
+          <img src="../images/libai.jpg" alt="">
+          <div class="title_row">
+            <h2 v-cloak>{{item.poet}}<small>{{item.dynasty}}</small></h2>
+            <el-button type="info" size="mini" @click="showEditDialog(item)" v-if="staus">编辑</el-button>
+          </div>
+          <p class="content_wrap_message" v-html="item.msg"></p>
+        </el-card>
+        <el-card>
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page"
+            :page-sizes="[10, 15,20, 30]" :pager-count="5" :page-size="num"
+            layout="total, sizes, prev, pager, next, jumper" :total="total">
+          </el-pagination>
+        </el-card>
+      </article>
+    </main>
+
+    <!-- 添加作者对话框 -->
+    <el-dialog title="添加作者" :visible.sync="addDialogVisible" width="50%" @closed="addDialogClose">
+      <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="100px">
+        <el-form-item label="作者名" prop="poet">
+          <el-input v-model="addForm.poet"></el-input>
+        </el-form-item>
+        <el-form-item label="内容" prop="msg">
+          <el-input type="textarea" :rows="5" placeholder="请输入内容" v-model="addForm.msg">
+          </el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="add">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 编辑作者对话框 -->
+    <el-dialog title="添加作者" :visible.sync="editDialogVisible" width="50%" @closed="editDialogClose">
+      <el-form :model="editForm" :rules="editFormRules" ref="editFormRef" label-width="100px">
+        <el-form-item label="作者名" prop="poet">
+          <el-input v-model="editForm.poet"></el-input>
+        </el-form-item>
+        <el-form-item label="内容" prop="msg">
+          <el-input type="textarea" :rows="5" placeholder="请输入内容" v-model="editForm.msg">
+          </el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="editDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="edit">确 定</el-button>
+      </span>
+    </el-dialog>
+  </div>
+
+
+
+  <script src="../js/axios.js"></script>
+  <script src="../js/vue.js"></script>
+  <script src="../js/element.js"></script>
+  <script src="../js/zuozhe.js"></script>
+</body>
+
+</html>
